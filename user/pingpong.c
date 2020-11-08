@@ -24,8 +24,8 @@ void main(int argc, char* argv[])
             exit();
         }
         printf("%d: received ping\n",getpid());
-        write(fd2[1],"pong\n",1);       //最后一个参数如何判断？
-        if(write(fd2[1],"pong\n",1)!=1)
+        write(fd2[1],"pong\n",6);       //最后一个参数如何判断？
+        if(write(fd2[1],"pong\n",6)!=6)
         {
             printf("child write error!\n");
             exit();
@@ -35,8 +35,8 @@ void main(int argc, char* argv[])
     //parent
     close(fd1[0]);
     close(fd2[1]);
-    write(fd1[1],"ping\n",1);      //fd[1]写操作
-    if(write(fd1[1],"ping\n",1)!=1)
+    write(fd1[1],"ping\n",6);      //fd[1]写操作
+    if(write(fd1[1],"ping\n",6)!=6)
     {
         printf("parent write error!\n");
         exit();
