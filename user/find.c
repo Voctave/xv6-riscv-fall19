@@ -74,11 +74,12 @@ void Findfile(char* path, char* filename)
         strcpy(buf, path);
         p = buf+strlen(buf);
         *p++ = '/';
-        while(read(fd,&de,sizeof(de))==sizeof(de))//循环表示的意思？
+        while(read(fd,&de,sizeof(de))==sizeof(de))//循环表示的意思？/////////////////////
         {
             if(de.inum ==0)//dirent无效
             {
                 continue;
+                
             }
             //计算当前dirent路径   ???
             int t = strlen(de.name)>DIRSIZ?DIRSIZ:strlen(de.name);
@@ -89,10 +90,12 @@ void Findfile(char* path, char* filename)
             {
                 printf("ls: cannot stat %s\n", buf);
                 continue;
+            
             }
             if(strcmp(de.name,".")==0||strcmp(de.name,"..")==0)
             {
                 continue;
+
             }
             Findfile(buf,filename);
         }

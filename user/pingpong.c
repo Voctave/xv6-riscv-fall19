@@ -5,13 +5,14 @@ void main(int argc, char* argv[])
 {
     int fd1[2];
     int fd2[2];
-    char buf[]={'X'};   //如何初始化buf？why？
+    char buf[6];   //如何初始化buf？why？///////////////////
     int n1;
     int n2;
 
     //create a pipe, with two FDs in fds[0],fds[1].
     pipe(fd1);//创建管道函数
     pipe(fd2);
+    //printf("%d",sizeof("ping\n"));
     
     if(fork()==0)    //child
     {
@@ -23,7 +24,7 @@ void main(int argc, char* argv[])
             printf("child read error!\n");
             exit();
         }
-        printf("%d: received ping\n",getpid());
+        printf("%d: received %s\n",getpid(),buf);
         write(fd2[1],"pong\n",6);       //最后一个参数如何判断？
         if(write(fd2[1],"pong\n",6)!=6)
         {
@@ -47,7 +48,7 @@ void main(int argc, char* argv[])
         printf("parent read error!\n");
         exit();
     }
-    printf("%d: received pong\n",getpid());
+    printf("%d: received %s\n",getpid(),buf);
     wait();
     exit();
 }
