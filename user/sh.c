@@ -149,7 +149,7 @@ main(void)
 
   // Ensure that three file descriptors are open.
   while((fd = open("console", O_RDWR)) >= 0){
-    if(fd >= 3){
+    if(fd >= 3){//fd>0, 这是一个文件描述符
       close(fd);
       break;
     }
@@ -160,12 +160,12 @@ main(void)
     if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' '){
       // Chdir must be called by the parent, not the child.
       buf[strlen(buf)-1] = 0;  // chop \n
-      if(chdir(buf+3) < 0)
+      if(chdir(buf+3) < 0)//chdir(dirname) Change the current directory
         fprintf(2, "cannot cd %s\n", buf+3);
       continue;
     }
     if(fork1() == 0)
-      runcmd(parsecmd(buf));
+      runcmd(parsecmd(buf));//parsecmd(buf)解释输入命令
     wait();
   }
   exit();
@@ -330,7 +330,7 @@ parsecmd(char *s)
   char *es;
   struct cmd *cmd;
 
-  es = s + strlen(s);
+  es = s + strlen(s);//指针吗移动到末尾
   cmd = parseline(&s, es);
   peek(&s, es, "");
   if(s != es){
