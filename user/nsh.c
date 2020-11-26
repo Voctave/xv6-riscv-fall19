@@ -10,6 +10,7 @@ void execPipe(char*argv[],int argc);
 //读取命令
 int getcmd(char *buf, int nbuf);
 void setargs(char *cmd, char* argv[],int* argc);
+//重定向&执行命令
 void runcmd(char*argv[],int argc);
 
 char whitespace[] = " \t\r\n\v";
@@ -48,7 +49,7 @@ void execPipe(char*argv[],int argc){
     // 将命令中的"|"换成'\0'
     for(i=0;i<argc;i++){
         if(!strcmp(argv[i],"|")){
-            argv[i]=0;
+            argv[i]="\0";
             break;
         }
     }
@@ -87,12 +88,12 @@ void setargs(char *cmd, char* argv[],int* argc)
     {
         // 每一轮循环都是找到输入的命令中的一个word，比如 echo hi ,就是先找到echo，再找到hi
         // 让argv[i]分别指向他们的开头，并且将echo，hi后面的空格设为\0
-        // 跳过之前的空格
+        // 跳过之前的空格符号
         while (strchr(whitespace,cmd[j])){
             j++;
         }
         argv[i++]=cmd+j;
-        // 只要不是空格，就j++,找到下一个空格
+        // 只要不是空格符号，就j++,找到下一个空格符号
         while (strchr(whitespace,cmd[j])==0){
             j++;
         }
@@ -105,28 +106,25 @@ void setargs(char *cmd, char* argv[],int* argc)
 void runcmd(char*argv[],int argc)
 {
     for(int i=1;i<argc;i++){
-        if(!strcmp(argv[i],"|")){
-            // 如果遇到 | 即pipe，至少说明后面还有一个命令要执行
+        if(!strcmp(argv[i],"|")){//相等返回0
+            // 如果遇到 | 即pipe，说明后面还有命令要执行
             execPipe(argv,argc);
         }
     }
-    // 此时是仅处理一个命令：现在判断argv[1]开始，后面有没有> 
+    // 仅处理一个命令：现在判断argv[1]开始，后面有没有> 
     for(int i=1;i<argc;i++){
-        // 如果遇到 > ，说明需要执行输出重定向，首先需要关闭stdout
+        // 如果遇到 > ，说明需要执行输出重定向，需要关闭stdout
         if(!strcmp(argv[i],">")){
             close(1);
-            // 此时需要把输出重定向到后面给出的文件名对应的文件里
-            // 当然如果>是最后一个，那就会error，不过暂时先不考虑
+            // 把输出重定向到文件名对应的文件
             open(argv[i+1],O_CREATE|O_WRONLY);
             argv[i]=0;
-            // break;
         }
         if(!strcmp(argv[i],"<")){
             // 如果遇到< ,需要执行输入重定向，关闭stdin
             close(0);
             open(argv[i+1],O_RDONLY);
             argv[i]=0;
-            // break;
         }
     }
     exec(argv[0], argv);
