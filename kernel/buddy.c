@@ -47,7 +47,7 @@ int alloc_bit_isset(char *array, int index) {
   char b = array[index/8];
   char m = (1 << (index % 8));
   return (b & m) == m;
-
+  
 }
 
 // Set bit at position index in array to 1
@@ -62,7 +62,6 @@ void bit_toggle(char *array, int index) {//array是一个char型数组，每个�
   char b = array[index/8];
   char m = (1 << (index % 8));
   array[index/8] = (b ^ m);
-
 }
 
 // Clear bit at position index in array
